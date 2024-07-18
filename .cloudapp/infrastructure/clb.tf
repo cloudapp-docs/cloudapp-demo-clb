@@ -40,3 +40,40 @@ resource "tencentcloud_clb_attachment" "api_http_attachment" {
     port        = 80
   }
 }
+
+
+# CLB 监听器（HTTPS）
+resource "tencentcloud_clb_listener" "https_listener" {
+  clb_id        = tencentcloud_clb_instance.open_clb.id
+  listener_name = "https_listener"
+  port          = 443
+  protocol      = "HTTPS"
+
+  # 证书类型：UNIDIRECTIONAL单向认证、MUTUAL双向认证
+  certificate_ssl_mode = "UNIDIRECTIONAL"
+  # 服务端证书 ID（需替换成自己的）
+  certificate_id = "Fw3oCVfC"
+}
+
+# CLB 转发规则（HTTPS）
+resource "tencentcloud_clb_listener_rule" "api_https_rule" {
+  clb_id      = tencentcloud_clb_instance.open_clb.id
+  listener_id = tencentcloud_clb_listener.https_listener.id
+  # 转发规则的域名（需替换成真实的域名）
+  domain = "api.cloudapp.com"
+  # 转发规则的路径
+  url = "/"
+}
+
+# CLB 后端服务（HTTPS）
+resource "tencentcloud_clb_attachment" "api_https_attachment" {
+  clb_id      = tencentcloud_clb_instance.open_clb.id
+  listener_id = tencentcloud_clb_listener.https_listener.id
+  rule_id     = tencentcloud_clb_listener_rule.api_https_rule.id
+
+  targets {
+    # CVM 实例ID（需替换成真实的实例ID）
+    instance_id = "ins-i07qw1ym"
+    port        = 80
+  }
+}
