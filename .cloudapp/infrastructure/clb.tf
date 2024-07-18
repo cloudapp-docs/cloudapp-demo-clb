@@ -52,7 +52,7 @@ resource "tencentcloud_clb_listener" "https_listener" {
   # 证书类型：UNIDIRECTIONAL单向认证、MUTUAL双向认证
   certificate_ssl_mode = "UNIDIRECTIONAL"
   # 服务端证书 ID（需替换成自己的）
-  certificate_id = "Fw3oCVfC"
+  certificate_id = var.ssl_certificate.certId
 }
 
 # CLB 转发规则（HTTPS）
